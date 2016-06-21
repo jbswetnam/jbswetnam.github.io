@@ -9,9 +9,8 @@
 </head>
 <body>
   <h3>
-    ----------------<br>
-    Date: 2016/06/20<br>
-    Topic: let->
+    2016/06/20<br>
+    let->
   </h3>
   <p>
     While working with <a href="https://github.com/xeqi/kerodon">kerodon</a> recently, I came across a situation where, in the middle of a threading macro <span class="fn-name">-></span> body, I wanted to capture an intermediate value and perform several tests on it without threading the results of one test to the next.  What I wanted was to use <span class="fn-name">as-></span> to capture the return value of the last form, with a <span class="fn-name">let</span> inside to do several things to that value.  I wrote a <span class="fn-name">let-></span> macro to do both in one step:
@@ -24,7 +23,7 @@
     (-> 1
         (cons [2 3])
         (let-> $
-          (prn $) ;;=> prints "[1 2 3]"
+          (prn $) ;;=> prints [1 2 3]
           (count $))) ;;=> returns 3</pre>
   <p>
     To me, this provides a great deal of flexibility within a threading macro chain while still being quite easy to read and follow.
