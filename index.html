@@ -31,4 +31,10 @@
   <p>
     I looked at some of the libraries out there that provide additional threading macros, but none seem to provide quite what I was looking for.  <a href="http://palletops.com/thread-expr/autodoc/pallet.thread-expr-api.html#pallet.thread-expr/let->">pallet.thread-expr</a> actually has a macro called <span class="fn-name">let-></span>, but it creates bindings for <em>new</em> values, while mine only handles the value returned by the last form in the chain.  My form is more useful for my purposes, and I think it's truer to the general usage of <span class="fn-name">-></span> and the others.
   </p>
+  <p>
+    I thought about putting this in a library, but what's the point?  This one macro is all I really needed to augment the core threading macros, and as you can see, it's almost as easy to just write the code verbatim as it is to <span class="fn-name">require</span> it in a file.  Feel free to use it if you like it!
+  </p>
+  <p>
+    #threading-macros #simple-tools
+  </p>
 </body>
