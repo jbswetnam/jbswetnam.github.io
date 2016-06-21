@@ -5,7 +5,9 @@
 <body>
   -- <h3>2016/06/20</h3>
   <h4>let-></h4>
-  While working with <a href="https://github.com/xeqi/kerodon"><pre>kerodon</pre></a> recently, I came across a situation where, in the middle of a threading macro <pre>-></pre> body, I wanted to capture an intermediate value and perform several tests on it without threading the results of one test to the next.  What I wanted was to use <pre>as-></pre> to capture the return value of the last form, with a <pre>let</pre> inside to do several things to that value.  I wrote a <pre>let-></pre> macro to do both in one step:
+  <div>
+    While working with <a href="https://github.com/xeqi/kerodon">kerodon</a> recently, I came across a situation where, in the middle of a threading macro <b>-></b> body, I wanted to capture an intermediate value and perform several tests on it without threading the results of one test to the next.  What I wanted was to use <b>as-></b> to capture the return value of the last form, with a <b>let</b> inside to do several things to that value.  I wrote a <b>let-></b> macro to do both in one step:
+  </div>
   <pre>
     (defmacro let->
       [start-val binding-sym & body]
@@ -14,7 +16,13 @@
     (-> 1
         (cons [2 3])
         (let-> $
-          (prn $)
-          (count $)))
+          (prn $) ;;=> prints "[1 2 3]"
+          (count $))) ;;=> returns 3
   </pre>
+  <div>
+    To me, this provides a great deal of flexibility within a threading macro chain while still quite easy to read and comprehend.
+  </div>
+  <div>
+    I looked at some of the libraries out there that provide additional threading macros, but none seem to provide quite this one.  <a href="http://palletops.com/thread-expr/autodoc/pallet.thread-expr-api.html#pallet.thread-expr/let->">pallet.thread-expr</a> actually has a macro called <b>let-></b>, but it creates binding for new values, while mine only handles the value returned by the last form in the chain.  My form is more useful for my purposes, and it's truer to the general usage of <b>-></b> and the others.
+  </div>
 </body>
