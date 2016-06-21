@@ -36,9 +36,11 @@
       font-weight: bold;
       font-size: 1.25em;
     }
-    .post-footer, .post-tags {
-      width: 49%;
-      display: inline-block;
+    @media (min-width: 600px) {
+      .post-footer, .post-tags {
+        width: 49%;
+        display: inline-block;
+      }
     }
   </style>
   <link rel="stylesheet" href="css/highlight.css">
