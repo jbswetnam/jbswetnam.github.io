@@ -3,8 +3,7 @@
   <title>joseph swetnam</title>
   <style>
     .fn-name {
-      color: blue;
-      font-weight: bold;
+      border:1px solid gray;
     }
   </style>
 </head>
@@ -26,7 +25,7 @@
           (prn $) ;;=> prints "[1 2 3]"
           (count $))) ;;=> returns 3</pre>
   <p>
-    To me, this provides a great deal of flexibility within a threading macro chain while still quite easy to read and comprehend.
+    To me, this provides a great deal of flexibility within a threading macro chain while still being quite easy to read and comprehend.
   </p>
   <p>
     I looked at some of the libraries out there that provide additional threading macros, but none seem to provide quite this one.  <a href="http://palletops.com/thread-expr/autodoc/pallet.thread-expr-api.html#pallet.thread-expr/let->">pallet.thread-expr</a> actually has a macro called <span class="fn-name">let-></span>, but it creates binding for new values, while mine only handles the value returned by the last form in the chain.  My form is more useful for my purposes, and I think it's truer to the general usage of <span class="fn-name">-></span> and the others.
