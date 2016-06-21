@@ -3,38 +3,46 @@
   <title>joseph swetnam</title>
   <style>
     .fn-name {
-      border:1px solid gray;
+      padding: 2px;
+      border: 1px solid gray;
     }
   </style>
+  <link rel="stylesheet" href="css/highlight.css">
+  <script src="js/highlight.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
 </head>
 <body>
   <h3>
-    2016/06/20<br>
-    let->
+    2016/06/20: let->
   </h3>
   <p>
-    While working with <a href="https://github.com/xeqi/kerodon">kerodon</a> recently, I came across a situation where, in the middle of a threading macro <span class="fn-name">-></span> body, I wanted to capture an intermediate value and perform several tests on it without threading the results of one test to the next.  What I wanted was to use <span class="fn-name">as-></span> to capture the return value of the last form, with a <span class="fn-name">let</span> inside to do several things to that value.  I wrote a <span class="fn-name">let-></span> macro to do both in one step:
+    While working with <a href="https://github.com/xeqi/kerodon">kerodon</a> recently, I came across a situation where, in the middle of a threading macro <span class="fn-name">-></span> body, I wanted to capture an intermediate value and perform several tests on it without threading the results of one test to the next.  What I wanted was to use <span class="fn-name">as-></span> to capture the return value of the last form, with a <span class="fn-name">let</span> inside to do several unrelated things to that value.  I wrote a <span class="fn-name">let-></span> macro to do both in one step:
   </p>
-  <pre
->    (defmacro let->
-      [start-val binding-sym & body]
-      `(as-> ~start-val x# (let [~binding-sym x#] ~@body)))
-    
-    (-> 1
-        (cons [2 3])
-        (let-> $
-          (prn $) ;;=> prints [1 2 3]
-          (count $))) ;;=> returns 3</pre>
+  <pre><code class="clojure"
+>(defmacro let->
+  [start-val binding-sym & body]
+ `(as-> ~start-val x#
+    (let [~binding-sym x#]
+      ~@body)))
+
+(-> 1
+    (cons [2 3])
+    (let-> $
+      (prn $) ;;=> prints [1 2 3]
+      (count $))
+    (* 2)) ;;=> returns 6</code></pre>
   <p>
     To me, this provides a great deal of flexibility within a threading macro chain while still being quite easy to read and follow.
   </p>
   <p>
-    I looked at some of the libraries out there that provide additional threading macros, but none seem to provide quite what I was looking for.  <a href="http://palletops.com/thread-expr/autodoc/pallet.thread-expr-api.html#pallet.thread-expr/let->">pallet.thread-expr</a> actually has a macro called <span class="fn-name">let-></span>, but it creates bindings for <em>new</em> values, while mine only handles the value returned by the last form in the chain.  My form is more useful for my purposes, and I think it's truer to the general usage of <span class="fn-name">-></span> and the others.
+    I looked at some of the libraries out there that provide additional threading macros, but none seem to provide quite what I was looking for.  <a href="http://palletops.com/thread-expr/autodoc/pallet.thread-expr-api.html#pallet.thread-expr/let->">pallet.thread-expr</a> actually has a macro called <span class="fn-name">let-></span>, but it creates bindings for <em>new</em> values, while mine only handles the value returned by the last form in the chain.  My form is more useful for my purposes, and I think it's truer to the general usage of <span class="fn-name">-></span> and friends.
   </p>
   <p>
-    I thought about putting this in a library, but what's the point?  This one macro is all I really needed to augment the core threading macros, and as you can see, it's almost as easy to just write the code verbatim as it is to <span class="fn-name">require</span> it in a file.  Feel free to use it if you like it!
+    Maybe I'll put this in a library one day, but I don't have any related macros to group it with, and it seems silly to do a whole library for this one little macro.  Feel free to use it if you like!
   </p>
   <p>
-    #threading-macros #simple-tools
+    <a href="javascript:void(0)">#threading-macros</a>
+    <a href="javascript:void(0)">#simple-tools</a>
+    <a href="javascript:void(0)">#clojure</a>
   </p>
 </body>
