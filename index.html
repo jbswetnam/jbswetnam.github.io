@@ -21,7 +21,7 @@
   </p>
   <div class="post-body">
     <p>
-      While working with <a href="https://github.com/xeqi/kerodon">kerodon</a> recently, I came across a situation where, in the middle of a threading macro <span class="fn-name">-></span> body, I wanted to capture an intermediate value and perform several tests on it without threading the results of one test to the next.  What I wanted was to use <span class="fn-name">as-></span> to capture the return value of the last form, with a <span class="fn-name">let</span> inside to do several unrelated things to that value.  I wrote a <span class="fn-name">let-></span> macro to do both in one step:
+      While working with <a href="https://github.com/xeqi/kerodon">kerodon</a> today, I came across a situation where, in the middle of a <span class="fn-name">-></span> body, I wanted to capture an intermediate value and perform several tests on it without threading the results of one test to the next.  What I wanted was to use <span class="fn-name">as-></span> to capture the return value of the last form, with a <span class="fn-name">let</span> inside to do several unrelated things to that value.  I wrote a <span class="fn-name">let-></span> macro to do both in one step:
     </p>
     <pre><code class="clojure"
 >(defmacro let->
