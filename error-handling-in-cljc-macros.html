@@ -56,9 +56,13 @@
     <p>
       Now the macro worked in cljs, but not in clj!  What was going on???  Well, it turns out that that cljs will allow you to refer to the exception class indirectly in a <span class="fn-name">catch</span> form, but clj will not.  In other words, the following works in cljs:
     </p>
-<pre><code class="clojure">(let [exception-class js/Error] (try (throw (js/Error. "Hey!")) (catch exception-class e (prn e))))</code></pre>
+<pre><code class="clojure">(let [exception-class js/Error]
+  (try (throw (js/Error. "Hey!"))
+    (catch exception-class e (prn e))))</code></pre>
     <p>But this will not work in clj:</p>
-<pre><code class="clojure">(let [exception-class Exception] (try (throw (Exception. "Hey!")) (catch exception-class e (prn e))))</code></pre>
+<pre><code class="clojure">(let [exception-class Exception]
+  (try (throw (Exception. "Hey!"))
+    (catch exception-class e (prn e))))</code></pre>
     <p>
       So, the only form of the macro that could possibly work in clj was the original form, in which <span class="fn-name">Exception</span> was referred to directly.  Was there any way to make it work in cljs as well?  Yes, because cljs allows us to refer to the exception class indirectly, I just needed to make <span class="fn-name">Exception</span> refer to <span class="fn-name">js/Error</span> in the cljs runtime.
     </p>
