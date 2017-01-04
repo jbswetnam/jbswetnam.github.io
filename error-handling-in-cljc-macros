@@ -1,0 +1,93 @@
+<!doctype html>
+<head>
+  <title>error handling in cljc macros</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/highlight.css">
+  <script src="js/highlight.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+</head>
+<body>
+  <div id="menu-bar">
+    <a href="/">/</a>
+    <a href="/about">/about</a>
+    <a href="/projects">/projects</a>
+    <a href="/github">/github</a>
+  </div>
+  <p>
+    <a class="post-header" href="#">
+      2017/01/04 error handling in cljc macros
+    </a>
+  </p>
+  <div class="post-body">
+    <p>
+      I had a macro that did some error handling, like this:
+    </p>
+<pre><code class="clojure">(defmacro my-macro
+  [& forms]
+ `(try
+    ~@forms
+    (catch Exception e#
+      ,,,)))</code></pre>
+    <p>
+      I decided that I wanted to be able to use it in cljs as well, which should just be a simple matter of changing <span class="fn-name">Exception</span> to <span class="fn-name">js/Error</span>.  It turned out not to be so simple!
+    </p>
+    <p>
+      My first thought was to use a reader conditional:
+    </p>
+<pre><code class="clojure">(defmacro my-macro
+  [& forms]
+ `(try
+    ~@forms
+    (catch #?(:clj Exception :cljs js/Error) e#
+      ,,,)))</code></pre>
+    <p>
+      But this produced <span class="fn-name">Exception</span> every time.  I soon realized that since the macro was being called during the compilation of my cljs file, it was happening in a JVM environment, so a reader conditional would always return the <span class="fn-name">:clj</span> value.  Therefore, the macro would have to produce code that would find the correct error class at runtime.  So I tried this:
+    </p>
+<pre><code class="clojure">(def error-class
+  #?(:clj Exception :cljs js/Error))
+
+(defmacro my-macro
+  [& forms]
+ `(try
+    ~@forms
+    (catch error-class e#
+      ,,,)))</code></pre>
+    <p>
+      Now the macro worked in cljs, but not in clj!  What was going on???  Well, it turns out that that cljs will allow you to refer to the exception class indirectly in a <span class="fn-name">catch</span> form, but clj will not.  In other words, the following works in cljs:
+    </p>
+<pre><code class="clojure">(let [exception-class js/Error] (try (throw (js/Error. "Hey!")) (catch exception-class e (prn e))))</code></pre>
+    <p>But this will not work in clj:</p>
+<pre><code class="clojure">(let [exception-class Exception] (try (throw (Exception. "Hey!")) (catch exception-class e (prn e))))</code></pre>
+    <p>
+      So, the only form of the macro that could possibly work in clj was the original form, in which <span class="fn-name">Exception</span> was referred to directly.  Was there any way to make it work in cljs as well?  Yes, because cljs allows us to refer to the exception class indirectly, I just needed to make <span class="fn-name">Exception</span> refer to <span class="fn-name">js/Error</span> in the cljs runtime.
+    </p>
+    <p>
+      Actually, it's a bit more complicated than that, because <span class="fn-name">Exception</span> expands to <span class="fn-name">java.lang.Exception</span> in the macro's output.  Fortunately, that dot syntax is valid in cljs &mdash; it reads the <span class="fn-name">Exception</span> property of the <span class="fn-name">lang</span> of an object bound to the symbol <span class="fn-name">java</span>.  Since I needed <span class="fn-name">java.lang.Exception</span> to be referred to exactly like that, the best way to do it was in a <span class="fn-name">let</span> form.  Here's what I ended up with:
+    </p>
+<pre><code class="clojure">(def fake-java
+  #?(:clj nil :cljs (clj->js {:lang {:Exception js/Error}})))
+
+(defmacro my-macro
+  [& forms]
+ `(let [~'java fake-java]
+    (try
+      ~@forms
+      (catch Exception e#
+        ,,,)))</code></pre>
+    <p>
+      In a clj environment, <span class="fn-name">java</span> resolves to <span class="fn-name">nil</span>, but that's okay because it doesn't interfere with <span class="fn-name">java.lang.Exception</span> in any way.  In a cljs environment, <span class="fn-name">java.lang.Exception</span> resolves to <span class="fn-name">js/Error</span>.  Now the macro works in both environments!
+    </p>
+  </div>
+  <p class="post-tags">
+    <a href="javascript:void(0)">#macros</a>
+    <a href="javascript:void(0)">#error-handling</a>
+    <a href="javascript:void(0)">#clojure</a>
+    <a href="javascript:void(0)">#clojurescript</a>
+  </p>
+  <p class="post-footer">
+    <a href="javascript:void(0)">0 comments</a>
+    <a href="javascript:void(0)">&lt;&lt;prev</a>
+    <a href="javascript:void(0)">next&gt;&gt;</a>
+  </p>
+</body>
