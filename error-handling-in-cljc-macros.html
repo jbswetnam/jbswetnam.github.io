@@ -59,7 +59,7 @@
 <pre><code class="clojure">(let [exception-class js/Error]
   (try (throw (js/Error. "Hey!"))
     (catch exception-class e (prn e))))</code></pre>
-    <p>But this will not work in clj:</p>
+    <p>But this will not work in <b>clj</b>:</p>
 <pre><code class="clojure">(let [exception-class Exception]
   (try (throw (Exception. "Hey!"))
     (catch exception-class e (prn e))))</code></pre>
