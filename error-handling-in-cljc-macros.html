@@ -42,16 +42,16 @@
     (catch #?(:clj Exception :cljs js/Error) e#
       ,,,)))</code></pre>
     <p>
-      But this produced <span class="fn-name">Exception</span> every time.  I soon realized that since the macro was being called during the compilation of my cljs file, it was happening in a JVM environment, so a reader conditional would always return the <span class="fn-name">:clj</span> value.  Therefore, the macro would have to produce code that would find the correct error class at runtime.  So I tried this:
+      But this produced <span class="fn-name">Exception</span> every time.  I soon realized that since the macro was being called during the compilation of my cljs file, it was happening in a JVM environment, so a reader conditional would always return the <span class="fn-name">:clj</span> value.  Therefore, the macro would have to produce code that would find the correct exception class at runtime.  So I tried this:
     </p>
-<pre><code class="clojure">(def error-class
+<pre><code class="clojure">(def exception-class
   #?(:clj Exception :cljs js/Error))
 
 (defmacro my-macro
   [& forms]
  `(try
     ~@forms
-    (catch error-class e#
+    (catch exception-class e#
       ,,,)))</code></pre>
     <p>
       Now the macro worked in cljs, but not in clj!  What was going on???  Well, it turns out that that cljs will allow you to refer to the exception class indirectly in a <span class="fn-name">catch</span> form, but clj will not.  In other words, the following works in cljs:
