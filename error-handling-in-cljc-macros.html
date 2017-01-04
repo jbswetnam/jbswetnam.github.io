@@ -78,7 +78,7 @@
     (try
       ~@forms
       (catch Exception e#
-        ,,,)))</code></pre>
+        ,,,))))</code></pre>
     <p>
       In a clj environment, <span class="fn-name">java</span> resolves to <span class="fn-name">nil</span>, but that's okay because it doesn't interfere with <span class="fn-name">java.lang.Exception</span> in any way.  In a cljs environment, <span class="fn-name">java.lang.Exception</span> resolves to <span class="fn-name">js/Error</span>.  Now the macro works in both environments!
     </p>
